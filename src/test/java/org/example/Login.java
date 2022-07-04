@@ -5,12 +5,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 
 
 
@@ -20,14 +21,10 @@ public class Login {
     private static final By usernameLocator = By.id("user-name");
     private static final By passwordLocator = By.id("password");
     private static final By loginButtonLocator = By.id("login-button");
+    private static final By loggedInUserText = By.xpath("//span[@class='title']");
+    private static final String getLoggedInUserTextSample = "PRODUCTS";
 
-
-    public static void main(String[] args) {
-
-        logInTest();
-
-    }
-
+    @Test
     public static void logInTest() {
         WebDriverManager.chromedriver().setup();
         WebDriver driver = new ChromeDriver();
@@ -45,13 +42,10 @@ public class Login {
         wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(loginButtonLocator)));
         driver.findElement(loginButtonLocator).click();
 
-        String url = driver.getCurrentUrl();
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(loggedInUserText)));
+        String loggedInUserTextValue = driver.findElement(loggedInUserText).getText();
+        Assert.assertTrue(loggedInUserTextValue.contains(getLoggedInUserTextSample));
 
-        if (url.equals("https://www.saucedemo.com/inventory.html")) {
-            System.out.println("Test Passed");
-        } else {
-            System.out.println("Test Failed");
-        }
         driver.quit();
     }
 }

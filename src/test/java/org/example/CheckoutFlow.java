@@ -7,6 +7,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.time.Duration;
 
@@ -24,10 +26,10 @@ public class CheckoutFlow {
     private static final By postalCodeLocator = By.id("postal-code");
     private static final By continueButtonLocator = By.id("continue");
     private static final By finishButtonLocator = By.id("finish");
-    public static void main(String[] args) {
-        checkoutFlowTest();
-    }
+    private static final By checkoutSuccessTextLocator = By.xpath("//h2[@class='complete-header']");
+    private static final String checkoutSuccessTextSample = "THANK YOU FOR YOUR ORDER";
 
+    @Test
     public static void checkoutFlowTest() {
         WebDriverManager.chromedriver().setup();
         WebDriver driver = new ChromeDriver();
@@ -69,13 +71,9 @@ public class CheckoutFlow {
         wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(finishButtonLocator)));
         driver.findElement(finishButtonLocator).click();
 
-        String url = driver.getCurrentUrl();
-
-        if (url.equals("https://www.saucedemo.com/checkout-complete.html")) {
-            System.out.println("Test Passed");
-        } else {
-            System.out.println("Test Failed");
-        }
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(checkoutSuccessTextLocator)));
+        String checkoutSuccessTextValue = driver.findElement(checkoutSuccessTextLocator).getText();
+        Assert.assertTrue(checkoutSuccessTextValue.contains(checkoutSuccessTextSample));
 
         driver.quit();
 
